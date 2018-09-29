@@ -8,4 +8,4 @@ to start:
   
 Must add:
   - second table page
-  - add entry buttons
+  - "add entry" buttons
