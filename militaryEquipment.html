@@ -1,0 +1,159 @@
+<html>
+    <head>
+        <!-- <script src="/jquery.js"></script> -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <style>
+            body {
+                background:#3c3c3c;
+            }
+            
+            .button {
+                color: rgb(161, 161, 161);
+                cursor:pointer;
+            }
+
+            .button:hover {
+                color: white;
+                
+            }
+            
+            .hidden {
+                visibility: hidden;
+            }
+
+            #navigation{
+                padding:30px;
+                width:20%;
+            }
+
+            #navigation a{
+                color:beige;
+                padding:15px;
+                border-radius:5px;
+                background:rgb(112, 168, 190);
+                text-align: center;
+                font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            }
+
+            th {
+                font-size: 20px;
+            }
+
+            .table {
+                width:70%;
+                margin:auto;
+            }
+        
+        </style>
+    </head>
+
+    <body>
+        <div id="navigation">
+            <a href="/index.html" class="button">Back</a>
+        </div>
+        <div id="disp">
+            <table id="table" class="table table-dark"></table>
+            <!-- <div id="editor" class="hidden">
+                <div id="id"><h2>placeholder</h2></div>
+                <div id="name"><input placeholder="placeholder"></input></div>
+                <div id="classification"><input placeholder="placeholder"></input></div>
+                <div id="manID"><h2>placeholder</h2></div>
+            </div> -->
+        </div>
+        <script>
+            $.get("http://localhost:8000/api/table/militaryequipment", function(json, status) {
+                console.log(status)
+                console.log(json)
+                var data = $.parseJSON(json)
+                console.log(data)
+
+                var table = $("#disp").children("#table")
+                var headerRow = $("<tr></tr>")
+                headerRow.append($("<th></th>").append("id"))
+                headerRow.append($("<th></th>").append("name"))
+                headerRow.append($("<th></th>").append("classification"))
+                headerRow.append($("<th></th>").append("manID"))
+                headerRow.append($("<th></th>"))
+                table.append(headerRow)
+
+                for (var i = 0; i < data.length; i++) {
+                    let newRow = $("<tr></tr>")
+                    newRow.attr("id", data[i].id)
+                    newRow.append($("<td></td>").attr("class", "id").append(data[i].id))
+                    newRow.append($("<td></td>").addClass("name").append(data[i].name))
+                    newRow.append($("<td></td>").attr("class", "classification").append(data[i].classification))
+                    newRow.append($("<td></td>").attr("class", "manID").append(data[i].manID))
+
+                    var editButton = $("<td></td>").append("...")
+                    editButton.attr("id", "edit~"+data[i].id)
+                    editButton.attr("title", data[i].id)
+                    editButton.addClass("editButton")
+                    editButton.addClass("button")
+                    editButton.click(function() {
+                        // $("#table").toggleClass("hidden")
+                        // $("#editor").toggleClass("hidden")
+
+                        let row = $("#"+this.title)
+                        let name = row.children(".name").contents().text()
+                        // console.log(name)
+                        let classification = row.children(".classification").contents().text()
+                        row.children(".name").empty()
+                        row.children(".name").append("<input type='text' id='nameField' value='"+name+"'></input>")
+                        row.children(".classification").empty()
+                        row.children(".classification").append("<input type='text' id='classificationField' value='"+classification+"'></input>")
+                        
+                        let editor = row.children(".editButton")
+                        editor.empty()
+                        var buttonHolder = $("<div></div>").addClass("changeButton")
+                        var doneButton = $("<text>Done</text>")
+                            .addClass("button")
+                            .css("background", "green")
+                            .css("padding", "7px")
+                            .css("border-radius", "4px")
+                            .click(function(){
+                                var id = this.parentNode.parentNode.parentNode.id
+                                var name = $("#"+id).children(".name").children("#nameField").val()
+                                var classification = $("#"+id).children(".classification").children("#classificationField").val()
+                                $.get("http://localhost:8000/api/update/"+id+"/"+name+"/"+classification, function(json, status){});
+
+                                window.location.reload()
+                                // $("#"+id).children(".name").children("#nameField").css("visibility", "hidden")
+                                // $("#"+id).children(".classification").children("#classificationField").replaceWith(classification)
+                            });
+                        var deleteButton = $("<text>Delete</text>")
+                            .addClass("button")
+                            .css("background", "red")
+                            .css("padding", "7px")
+                            .css("border-radius", "4px")
+                            .click(function(){
+                                var id = this.parentNode.parentNode.parentNode.id
+                                var name = $("#"+id).children(".name").children("#nameField").val()
+                                var classification = $("#"+id).children(".classification").children("#classificationField").val()
+                                $.get("http://localhost:8000/api/delete/"+id, function(json, status){});
+
+                                window.location.reload()
+                                // $("#"+id).children(".name").children("#nameField").css("visibility", "hidden")
+                                // $("#"+id).children(".classification").children("#classificationField").replaceWith(classification)
+                        });
+                        buttonHolder.append(doneButton)
+                        buttonHolder.append(deleteButton)
+                        editor.append(buttonHolder)
+                        
+
+                    });
+
+                    newRow.append(editButton)
+                    table.append(newRow)
+                }
+                
+                // table.attr("margin") = "10px";
+                // table.attr("") = "flex";
+                $("#disp").append(table);
+            });
+        </script>
+    </body>
+        
+
+</html>

@@ -1,0 +1,16 @@
+#navigation{
+    padding:30px;
+    width:20%;
+    margin:auto;
+    display:flex;
+    flex-direction: column;
+}
+
+#navigation a{
+    color:beige;
+    padding:15px;
+    border-radius:5px;
+    background:rgb(112, 168, 190);
+    text-align: center;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
