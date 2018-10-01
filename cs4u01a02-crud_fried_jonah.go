@@ -196,7 +196,7 @@ const (
 func clearDatabases(db *sql.DB) {
 	_, err := db.Exec("DROP TABLE militaryEquipment, manufacturers, wars, warEquipmentPairs")
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 	_, err = db.Exec("CREATE TABLE militaryEquipment (id serial, name varchar(20), classification varchar(20), manufacturerID varchar(20));")
 	if err != nil {
@@ -210,7 +210,7 @@ func clearDatabases(db *sql.DB) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = db.Exec("CREATE TABLE warEquipmentPairs (id serial, warID integer, equipmentID integer);")
+	_, err = db.Exec("CREATE TABLE warEquipmentPairs (warID integer, equipmentID integer);")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -322,7 +322,7 @@ func addWarEquipmentPair(db *sql.DB, warName string, equipmentName string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = db.Exec("INSERT INTO warEquipmentPairs (id, warID, equipmentID) VALUES(DEFAULT, $1, $2);", warID, equipmentID)
+	_, err = db.Exec("INSERT INTO warEquipmentPairs (warID, equipmentID) VALUES($1, $2);", warID, equipmentID)
 	if err != nil {
 		log.Fatal(err)
 	}
