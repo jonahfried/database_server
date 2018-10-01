@@ -2,7 +2,7 @@
 
 to start:
   - start postgres server
-  - execute `go run .`
+  - execute ./database_server
   - go to localhost:8000
   
   
