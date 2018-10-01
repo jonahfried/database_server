@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -70,11 +71,23 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			name := parts[4]
 			updateManufacturer(db, int64(id), name)
+		} else if parts[2] == "post" {
+			bytes, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				log.Print(err)
+			}
+			fileText := string(bytes)
+			fileLines := strings.Split(fileText, "\n")
+			fileLines = fileLines[4 : len(fileLines)-2]
+
+			readCsvData(db, fileLines)
 		}
 	} else if parts[1] == "militaryEquipment" {
 		http.ServeFile(w, r, "militaryEquipment.html")
 	} else if parts[1] == "manufacturers" {
 		http.ServeFile(w, r, "manufacturers.html")
+	} else if parts[1] == "loaddata" {
+		http.ServeFile(w, r, "loaddata.html")
 	} else {
 		http.ServeFile(w, r, "index.html")
 	}

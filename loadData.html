@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <style>
+            body {
+                background: #3c3c3c
+            }
+            
+            input {
+                margin: 4px;
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                width:40%;
+                align-items: center;
+                margin: auto;
+            }
+            #fileSelect {
+                width: 50%;
+                background: beige;
+            }
+            #navigation{
+                padding:30px;
+                width:20%;
+            }
+
+            #navigation a{
+                color:beige;
+                padding:15px;
+                border-radius:5px;
+                background:rgb(112, 168, 190);
+                text-align: center;
+                font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            }
+            #title {
+                border:1px solid black;
+                background:lightgrey;
+                border-radius:4px;
+                color:black;
+                width: 30%;
+                margin: auto;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="navigation">
+            <a href="/index.html" class="button">Back</a>
+        </div>
+        <h1 id="title">
+            Add CSV File Data:
+        </h1>
+        <form>
+            <input id="fileSelect" type="file">
+            <input type="submit" id="submitButton" value="Submit">
+        </form>
+        <script>
+            var form = document.querySelector('form');
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+
+                let files = document.querySelector("[type=file]").files;
+                let formData = new FormData();
+                for (let i = 0; i < files.length; i++) {
+                    let file = files[i];
+
+                    formData.append('files[]', file);
+                }
+                fetch("http://localhost:8000/api/post", {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    console.log(response);
+                });
+            });
+
+        </script>
+    </body>
+
+</html>

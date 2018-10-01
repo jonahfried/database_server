@@ -1,13 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"database/sql"
-	"encoding/csv"
 	"fmt"
-	"io"
 	"log"
-	"os"
+	"strings"
 
 	"github.com/lib/pq"
 
@@ -197,21 +194,13 @@ const (
 	dbName     = "postgres"
 )
 
-func readCsvData(db *sql.DB, path string) {
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	reader := csv.NewReader(bufio.NewReader(file))
-	for counter := 0; true; counter++ {
-		line, err := reader.Read()
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			log.Fatal(err)
-		}
+func readCsvData(db *sql.DB, lines []string) {
+	for counter := 0; counter < len(lines); counter++ {
+		line := lines[counter]
 		if counter > 0 {
-			insert(db, line[0], line[1], line[2])
+			fields := strings.Split(line, ",")
+			// fmt.Println(fields[0], fields[1], fields[2])
+			insert(db, fields[0], fields[1], fields[2])
 		}
 	}
 }
@@ -410,7 +399,6 @@ func runsuite(db *sql.DB) {
 	insert(db, "small tank", "tank", "TankCo")
 	insert(db, "BigBoy", "bomber", "bombsRus")
 	insert(db, "Gotha G V", "bomber", "bombsRus")
-	readCsvData(db, "equipment.csv")
 	insertWar(db, "bad war", 100)
 	addWarEquipmentPair(db, "bad war", "small tank")
 	// table := getEquipmentByWar(db, "bad war")
