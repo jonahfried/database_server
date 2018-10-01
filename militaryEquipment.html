@@ -147,6 +147,38 @@
                     newRow.append(editButton)
                     table.append(newRow)
                 }
+                var addRow = $("<tr></tr>").attr("id", "addRow")
+                for (let i = 0; i < 4; i++) {
+                    addRow.append("<td></td>")
+                }
+                var addButton = $("<td>Add Equipment</td>").click(function() {
+                    let row = $("#addRow")
+                    row.empty()
+                    row.append("<td></td>")
+                    row.append("<td><input id='addNameField' placeholder='Equipment Name'></input></td>")
+                    row.append("<td><input id='addClassificationField' placeholder='Classification'></input></td>")
+                    row.append("<td><input id='addManufacturerField' placeholder='Manufacturer'></input></td>")
+                    let submitButton = $("<button>Submit</button>")
+                        .addClass("button")
+                        .css("background", "green")
+                        .css("padding", "7px")
+                        .css("border-radius", "4px")
+                        .click(function(){
+                            // var id = this.parentNode.parentNode.parentNode.id
+                            let name = $("#addNameField").val()
+                            let classification = $("#addClassificationField").val()
+                            let manufacturer = $("#addManufacturerField").val()
+                            $.get("http://localhost:8000/api/add/"+name+"/"+classification + "/" + manufacturer, function(json, status){});
+
+                            window.location.reload()
+                            // $("#"+id).children(".name").children("#nameField").css("visibility", "hidden")
+                            // $("#"+id).children(".classification").children("#classificationField").replaceWith(classification)
+                        });
+                    row.append($("<td></td>").append(submitButton))
+                });
+                addButton.addClass("button")
+                addRow.append(addButton)
+                table.append(addRow)
                 
                 // table.attr("margin") = "10px";
                 // table.attr("") = "flex";

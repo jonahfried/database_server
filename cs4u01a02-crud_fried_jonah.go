@@ -18,6 +18,12 @@ type militaryEquipment struct {
 	rowCount        int
 }
 
+type manufacturers struct {
+	ids      []int64
+	names    []string
+	rowCount int
+}
+
 func (me militaryEquipment) displayEquipment() {
 	for i := 0; i < me.rowCount; i++ {
 		fmt.Println(me.ids[i], me.classifications[i], me.names[i], me.manIDs[i])
@@ -71,6 +77,29 @@ func getAllFromMilitaryEquipment(db *sql.DB) (results militaryEquipment) {
 		results.classifications = append(results.classifications, newClassification)
 		results.names = append(results.names, newName)
 		results.manIDs = append(results.manIDs, manID)
+	}
+	rows.Close()
+	return results
+}
+
+func getAllFromManufacturers(db *sql.DB) (results manufacturers) {
+	results.ids = make([]int64, 0)
+	results.names = make([]string, 0)
+	var newID int64
+	var newName string
+
+	rows, err := db.Query("SELECT * FROM manufacturers ORDER BY id;")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for rows.Next() {
+		results.rowCount++
+		if err := rows.Scan(&newID, &newName); err != nil {
+			log.Fatal(err)
+		}
+		results.ids = append(results.ids, newID)
+		results.names = append(results.names, newName)
+
 	}
 	rows.Close()
 	return results
@@ -135,6 +164,13 @@ func getByType(db *sql.DB, equipmentType string) (results militaryEquipment) {
 
 func updateInfo(db *sql.DB, id int64, name, classification string) {
 	_, err := db.Exec("UPDATE militaryEquipment SET name=$1, classification=$2 WHERE id = $3;", name, classification, id)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func updateManufacturer(db *sql.DB, id int64, name string) {
+	_, err := db.Exec("UPDATE manufacturers SET name=$1 WHERE id = $2;", name, id)
 	if err != nil {
 		log.Fatal(err)
 	}
