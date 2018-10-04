@@ -288,6 +288,29 @@ func deleteManufacturer(db *sql.DB, name string) {
 	}
 }
 
+func deleteManufacturerByID(db *sql.DB, id int64) {
+	_, err := db.Exec("DELETE FROM manufacturers WHERE id = $1 ", id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	equipmentIdsToDelete := make([]int64, 0)
+	var newID int64
+	rows, err := db.Query("DELETE FROM militaryEquipment WHERE manufacturerID = $1 RETURNING id", id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for rows.Next() {
+		if err = rows.Scan(&newID); err != nil {
+			log.Fatal(err)
+		}
+		equipmentIdsToDelete = append(equipmentIdsToDelete, newID)
+	}
+	_, err = db.Exec("DELETE FROM warEquipmentPairs WHERE equipmentID = any($1)", pq.Array(equipmentIdsToDelete))
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func getEquipmentIDFromName(db *sql.DB, name string) (id int64) {
 	err := db.QueryRow("SELECT id FROM militaryEquipment WHERE name = $1", name).Scan(&id)
 	if err != nil {

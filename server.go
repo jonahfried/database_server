@@ -56,6 +56,13 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			deleteByID(db, int64(id))
 			fmt.Fprint(w, "true")
+		} else if parts[2] == "deletemanufacturer" {
+			id, err := strconv.Atoi(parts[3])
+			if err != nil {
+				log.Fatal(err)
+			}
+			deleteManufacturerByID(db, int64(id))
+			fmt.Fprint(w, "true")
 		} else if parts[2] == "add" {
 			name := parts[3]
 			classification := parts[4]

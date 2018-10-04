@@ -121,7 +121,7 @@
                             .css("border-radius", "4px")
                             .click(function(){
                                 let id = this.parentNode.parentNode.parentNode.id
-                                $.get("http://localhost:8000/api/delete/"+id, function(json, status){});
+                                $.get("http://localhost:8000/api/deletemanufacturer/"+id, function(json, status){});
 
                                 window.location.reload()
                                 // $("#"+id).children(".name").children("#nameField").css("visibility", "hidden")
